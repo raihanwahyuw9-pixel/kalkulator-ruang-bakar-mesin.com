@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penghitung CC Kendaraan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            border-radius: 16px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background-color: #f8f9fa;
+            color: #3498db;
+        }
+
+        .nav-tab.active {
+            color: #3498db;
+            border-bottom: 3px solid #3498db;
+            background-color: #f8f9fa;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .calculator-card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 900px) {
+            .calculator-card {
+                flex-direction: row;
+            }
+        }
+
+        .calculator-input {
+            padding: 40px;
+            flex: 1;
+            background-color: #f9f9f9;
+        }
+
+        .calculator-output {
+            padding: 40px;
+            flex: 1;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input, .input-wrapper select {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            transition: border-color 0.3s;
+            outline: none;
+            background-color: white;
+        }
+
+        .input-wrapper input:focus, .input-wrapper select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        .unit {
+            position: absolute;
+            right: 15px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .input-row .input-group {
+            flex: 1;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s, transform 0.2s;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .reset-btn {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+            border: 2px solid #e0e0e0;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .reset-btn:hover {
+            background-color: #e9ecef;
+            color: #2c3e50;
+            border-color: #bdc3c7;
+        }
+
+        .result-container {
+            text-align: center;
+            width: 100%;
+        }
+
+        .result-title {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .result-value {
+            color: #2c3e50;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            transition: all 0.3s;
+        }
+
+        .result-unit {
+            color: #3498db;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .classification-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            background-color: #e8f4fc;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+
+        .result-details {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .result-details h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #7f8c8d;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .formula-box {
+            background-color: #f1f8ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .formula-box h4 {
+            margin-bottom: 10px;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .formula-box code {
+            background-color: #e8f4fc;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .vehicle-icon {
+            font-size: 5rem;
+            color: #3498db;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .tips-section {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .tips-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .tip-card {
+            background-color: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .tip-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tip-card p {
+            color: #555;
+        }
+
+        .examples-section {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .examples-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .example-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .example-card:hover {
+            border-color: #3498db;
+            transform: translateY(-3px);
+        }
+
+        .example-card h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .example-card p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .example-card .specs {
+            background-color: #e8f4fc;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .input-note {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .silinder-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .silinder-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .silinder-btn:hover {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .silinder-btn.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .vehicle-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .vehicle-type {
+            flex: 1;
+            min-width: 120px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vehicle-type:hover {
+            border-color: #3498db;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
+        }
+
+        .vehicle-type.active {
+            border-color: #3498db;
+            background-color: #e8f4fc;
+        }
+
+        .vehicle-type i {
+            font-size: 2.5rem;
+            color: #3498db;
+        }
+
+        .vehicle-type span {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .quick-calc-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .quick-calc-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.2s;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .quick-calc-btn:hover {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .classification-info {
+            background-color: #fff8e1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .classification-info h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .classification-info p {
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .input-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .vehicle-selector {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .result-value {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-calculator"></i> Penghitung CC Kendaraan</h1>
+            <p>Hitung kapasitas mesin motor, mobil, truk, dan kendaraan lainnya dengan akurat</p>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="calculator"><i class="fas fa-calculator"></i> Kalkulator CC</div>
+            <div class="nav-tab" data-tab="tips"><i class="fas fa-lightbulb"></i> Tips Penggunaan</div>
+            <div class="nav-tab" data-tab="examples"><i class="fas fa-car"></i> Contoh Kendaraan</div>
+        </div>
+
+        <!-- Tab Kalkulator -->
+        <div id="calculator" class="tab-content active">
+            <div class="vehicle-selector">
+                <div class="vehicle-type active" data-vehicle="motor">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Motor</span>
+                </div>
+                <div class="vehicle-type" data-vehicle="mobil">
+                    <i class="fas fa-car"></i>
+                    <span>Mobil</span>
+                </div>
+                <div class="vehicle-type" data-vehicle="truk">
+                    <i class="fas fa-truck"></i>
+                    <span>Truk</span>
+                </div>
+                <div class="vehicle-type" data-vehicle="lainnya">
+                    <i class="fas fa-cog"></i>
+                    <span>Lainnya</span>
+                </div>
+            </div>
+
+            <div class="calculator-card">
+                <div class="calculator-input">
+                    <h2>Input Data <span id="vehicleName">Motor</span></h2>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="diameter">Diameter Piston (Bore)</label>
+                            <div class="input-wrapper">
+                                <div class="input-icon">
+                                    <i class="fas fa-ruler-horizontal"></i>
+                                </div>
+                                <input type="number" id="diameter" placeholder="Contoh: 57.8" step="0.1" min="1">
+                                <div class="unit">mm</div>
+                            </div>
+                            <div class="input-note">Ukuran diameter silinder mesin</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="stroke">Langkah Piston (Stroke)</label>
+                            <div class="input-wrapper">
+                                <div class="input-icon">
+                                    <i class="fas fa-ruler-vertical"></i>
+                                </div>
+                                <input type="number" id="stroke" placeholder="Contoh: 63.5" step="0.1" min="1">
+                                <div class="unit">mm</div>
+                            </div>
+                            <div class="input-note">Panjang langkah piston dalam silinder</div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="cylinders">Jumlah Silinder</label>
+                        <div class="input-wrapper">
+                            <div class="input-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <input type="number" id="cylinders" placeholder="Contoh: 2" min="1" max="16" value="1">
+                            <div class="unit">silinder</div>
+                        </div>
+                        
+                        <div class="silinder-options">
+                            <div class="silinder-btn" data-cylinders="1">1</div>
+                            <div class="silinder-btn" data-cylinders="2">2</div>
+                            <div class="silinder-btn" data-cylinders="3">3</div>
+                            <div class="silinder-btn" data-cylinders="4">4</div>
+                            <div class="silinder-btn" data-cylinders="6">6</div>
+                            <div class="silinder-btn" data-cylinders="8">8</div>
+                        </div>
+                        <div class="input-note">Pilih jumlah silinder mesin</div>
+                    </div>
+
+                    <div class="quick-calc-buttons">
+                        <div class="quick-calc-btn" data-example="motor-bebek">Motor Bebek</div>
+                        <div class="quick-calc-btn" data-example="motor-sport">Motor Sport</div>
+                        <div class="quick-calc-btn" data-example="mobil-city">Mobil City</div>
+                        <div class="quick-calc-btn" data-example="mobil-sport">Mobil Sport</div>
+                    </div>
+
+                    <button class="calculate-btn" id="calculateBtn">
+                        <i class="fas fa-calculator"></i> Hitung Kapasitas Mesin
+                    </button>
+
+                    <button class="reset-btn" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+
+                    <div class="formula-box">
+                        <h4><i class="fas fa-square-root-alt"></i> Rumus Perhitungan</h4>
+                        <p>Kapasitas mesin dihitung menggunakan rumus volume tabung:</p>
+                        <p><code>V = π × (d/2)² × l × n</code></p>
+                        <p>di mana: <br>
+                           <code>d</code> = diameter piston (mm), <br>
+                           <code>l</code> = langkah piston (mm), <br>
+                           <code>n</code> = jumlah silinder</p>
+                        <p>Hasil dalam mm³ kemudian dikonversi ke cm³ (cc) dengan membagi 1000.</p>
+                    </div>
+                </div>
+
+                <div class="calculator-output">
+                    <div class="vehicle-icon" id="vehicleIcon">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <div class="result-title">Kapasitas Mesin</div>
+                    <div class="result-value" id="resultValue">0</div>
+                    <div class="result-unit">CC (cm³)</div>
+                    
+                    <div class="classification-badge" id="classificationBadge">-</div>
+
+                    <div class="result-details">
+                        <h3><i class="fas fa-info-circle"></i> Detail Perhitungan</h3>
+                        <div class="detail-item">
+                            <span class="detail-label">Jenis Kendaraan:</span>
+                            <span class="detail-value" id="detailVehicleType">Motor</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Diameter Piston:</span>
+                            <span class="detail-value" id="detailDiameter">0 mm</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Langkah Piston:</span>
+                            <span class="detail-value" id="detailStroke">0 mm</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Jumlah Silinder:</span>
+                            <span class="detail-value" id="detailCylinders">0</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Volume per Silinder:</span>
+                            <span class="detail-value" id="detailVolumePerCylinder">0 mm³</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Volume Total:</span>
+                            <span class="detail-value" id="detailTotalVolume">0 mm³</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Kapasitas Mesin:</span>
+                            <span class="detail-value" id="detailCapacity">0 cc</span>
+                        </div>
+                    </div>
+
+                    <div class="classification-info" id="classificationInfo">
+                        <h4><i class="fas fa-chart-bar"></i> Klasifikasi</h4>
+                        <p id="classificationText">Masukkan data untuk melihat klasifikasi kendaraan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Tips -->
+        <div id="tips" class="tab-content">
+            <div class="tips-section">
+                <h2><i class="fas fa-lightbulb"></i> Tips Penggunaan Aplikasi</h2>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h3><i class="fas fa-1"></i> Pilih Jenis Kendaraan</h3>
+                        <p>Mulailah dengan memilih jenis kendaraan yang ingin dihitung kapasitas mesinnya. Pilihan ini akan menentukan klasifikasi yang tepat untuk hasil perhitungan Anda.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-2"></i> Masukkan Data Akurat</h3>
+                        <p>Gunakan data spesifikasi teknis yang akurat. Diameter dan langkah piston biasanya tercantum dalam manual kendaraan atau spesifikasi pabrikan.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-3"></i> Perhatikan Satuan</h3>
+                        <p>Pastikan semua input dalam satuan milimeter (mm). Jika data Anda dalam satuan lain, konversi terlebih dahulu ke mm sebelum memasukkan.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-4"></i> Gunakan Tombol Cepat</h3>
+                        <p>Manfaatkan tombol jumlah silinder dan contoh kendaraan untuk mempercepat proses input data tanpa harus mengetik manual.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-5"></i> Pahami Hasil</h3>
+                        <p>Perhatikan klasifikasi yang muncul bersama hasil perhitungan. Klasifikasi membantu memahami di mana posisi kendaraan Anda dibandingkan dengan lainnya.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-6"></i> Verifikasi Data</h3>
+                        <p>Setelah mendapatkan hasil, bandingkan dengan spesifikasi resmi kendaraan Anda untuk memastikan keakuratan perhitungan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="examples-section">
+                <h2><i class="fas fa-search"></i> Cara Mendapatkan Data</h2>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h3><i class="fas fa-book"></i> Manual Kendaraan</h3>
+                        <p>Data spesifikasi teknis paling akurat biasanya terdapat dalam buku manual kendaraan yang diberikan saat pembelian.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-globe"></i> Situs Web Pabrikan</h3>
+                        <p>Kunjungi situs resmi pabrikan kendaraan untuk mendapatkan spesifikasi teknis yang terperinci dan terupdate.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-tools"></i> Bengkel Resmi</h3>
+                        <p>Mintalah bantuan teknisi di bengkel resmi untuk mengukur atau memberikan data spesifikasi kendaraan Anda.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h3><i class="fas fa-community"></i> Forum Komunitas</h3>
+                        <p>Bergabunglah dengan forum atau grup komunitas pemilik kendaraan sejenis untuk berbagi informasi spesifikasi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Contoh -->
+        <div id="examples" class="tab-content">
+            <div class="examples-section">
+                <h2><i class="fas fa-car"></i> Contoh Spesifikasi Kendaraan</h2>
+                
+                <h3 style="color: #2c3e50; margin: 30px 0 20px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-motorcycle"></i> Sepeda Motor
+                </h3>
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <h4>Motor Bebek (Honda Supra X 125)</h4>
+                        <p><strong>Diameter:</strong> 52.4 mm</p>
+                        <p><strong>Langkah:</strong> 57.9 mm</p>
+                        <p><strong>Silinder:</strong> 1</p>
+                        <div class="specs">Hasil: ≈124.9 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Motor Sport (Yamaha R15)</h4>
+                        <p><strong>Diameter:</strong> 57.0 mm</p>
+                        <p><strong>Langkah:</strong> 58.7 mm</p>
+                        <p><strong>Silinder:</strong> 1</p>
+                        <div class="specs">Hasil: ≈149.8 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Motor Matic (Honda Beat)</h4>
+                        <p><strong>Diameter:</strong> 50.0 mm</p>
+                        <p><strong>Langkah:</strong> 55.0 mm</p>
+                        <p><strong>Silinder:</strong> 1</p>
+                        <div class="specs">Hasil: ≈108.0 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Motor Besar (Kawasaki Ninja 650)</h4>
+                        <p><strong>Diameter:</strong> 83.0 mm</p>
+                        <p><strong>Langkah:</strong> 60.0 mm</p>
+                        <p><strong>Silinder:</strong> 2</p>
+                        <div class="specs">Hasil: ≈649 cc</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #2c3e50; margin: 30px 0 20px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-car"></i> Mobil
+                </h3>
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <h4>Mobil City (Toyota Agya)</h4>
+                        <p><strong>Diameter:</strong> 72.0 mm</p>
+                        <p><strong>Langkah:</strong> 77.5 mm</p>
+                        <p><strong>Silinder:</strong> 3</p>
+                        <div class="specs">Hasil: ≈998 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Mobil Sedan (Honda Civic)</h4>
+                        <p><strong>Diameter:</strong> 81.0 mm</p>
+                        <p><strong>Langkah:</strong> 89.0 mm</p>
+                        <p><strong>Silinder:</strong> 4</p>
+                        <div class="specs">Hasil: ≈1799 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Mobil Sport (Toyota 86)</h4>
+                        <p><strong>Diameter:</strong> 86.0 mm</p>
+                        <p><strong>Langkah:</strong> 86.0 mm</p>
+                        <p><strong>Silinder:</strong> 4</p>
+                        <div class="specs">Hasil: ≈1998 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Mobil SUV (Toyota Fortuner)</h4>
+                        <p><strong>Diameter:</strong> 92.0 mm</p>
+                        <p><strong>Langkah:</strong> 93.8 mm</p>
+                        <p><strong>Silinder:</strong> 4</p>
+                        <div class="specs">Hasil: ≈2393 cc</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #2c3e50; margin: 30px 0 20px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-truck"></i> Truk & Kendaraan Besar
+                </h3>
+                <div class="examples-grid">
+                    <div class="example-card">
+                        <h4>Truk Ringan (Mitsubishi L300)</h4>
+                        <p><strong>Diameter:</strong> 86.0 mm</p>
+                        <p><strong>Langkah:</strong> 86.0 mm</p>
+                        <p><strong>Silinder:</strong> 4</p>
+                        <div class="specs">Hasil: ≈1998 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Truk Sedang (Isuzu Elf)</h4>
+                        <p><strong>Diameter:</strong> 104.0 mm</p>
+                        <p><strong>Langkah:</strong> 118.0 mm</p>
+                        <p><strong>Silinder:</strong> 4</p>
+                        <div class="specs">Hasil: ≈4009 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Bus (Mercedes-Benz OH)</h4>
+                        <p><strong>Diameter:</strong> 128.0 mm</p>
+                        <p><strong>Langkah:</strong> 155.0 mm</p>
+                        <p><strong>Silinder:</strong> 6</p>
+                        <div class="specs">Hasil: ≈11967 cc</div>
+                    </div>
+                    <div class="example-card">
+                        <h4>Truk Berat (Hino 500)</h4>
+                        <p><strong>Diameter:</strong> 112.0 mm</p>
+                        <p><strong>Langkah:</strong> 130.0 mm</p>
+                        <p><strong>Silinder:</strong> 6</p>
+                        <div class="specs">Hasil: ≈7678 cc</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Aplikasi Penghitung CC Kendaraan &copy; 2023 | Menggunakan rumus volume tabung V = π × r² × t × n</p>
+            <p>Untuk informasi spesifikasi kendaraan yang akurat, selalu merujuk pada manual resmi dari pabrikan.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elemen DOM
+            const diameterInput = document.getElementById('diameter');
+            const strokeInput = document.getElementById('stroke');
+            const cylindersInput = document.getElementById('cylinders');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const resultValue = document.getElementById('resultValue');
+            const detailVehicleType = document.getElementById('detailVehicleType');
+            const detailDiameter = document.getElementById('detailDiameter');
+            const detailStroke = document.getElementById('detailStroke');
+            const detailCylinders = document.getElementById('detailCylinders');
+            const detailVolumePerCylinder = document.getElementById('detailVolumePerCylinder');
+            const detailTotalVolume = document.getElementById('detailTotalVolume');
+            const detailCapacity = document.getElementById('detailCapacity');
+            const cylinderButtons = document.querySelectorAll('.silinder-btn');
+            const vehicleTypes = document.querySelectorAll('.vehicle-type');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const vehicleName = document.getElementById('vehicleName');
+            const vehicleIcon = document.getElementById('vehicleIcon');
+            const classificationBadge = document.getElementById('classificationBadge');
+            const classificationText = document.getElementById('classificationText');
+            const quickCalcButtons = document.querySelectorAll('.quick-calc-btn');
+            
+            // Variabel state
+            let currentVehicleType = 'motor';
+            let currentTab = 'calculator';
+            
+            // Data klasifikasi berdasarkan jenis kendaraan
+            const vehicleClassifications = {
+                motor: {
+                    icon: 'fas fa-motorcycle',
+                    classifications: [
+                        { min: 0, max: 110, name: 'Motor Bebek', color: '#27ae60', bgColor: '#d5f4e6' },
+                        { min: 110, max: 150, name: 'Motor Standar', color: '#2ecc71', bgColor: '#d5f4e6' },
+                        { min: 150, max: 250, name: 'Motor Sport Ringan', color: '#f39c12', bgColor: '#fef5e7' },
+                        { min: 250, max: 500, name: 'Motor Sport', color: '#e67e22', bgColor: '#fdebd0' },
+                        { min: 500, max: 1000, name: 'Motor Besar', color: '#e74c3c', bgColor: '#fadbd8' },
+                        { min: 1000, max: Infinity, name: 'Superbike', color: '#c0392b', bgColor: '#f9eaea' }
+                    ]
+                },
+                mobil: {
+                    icon: 'fas fa-car',
+                    classifications: [
+                        { min: 0, max: 1000, name: 'Mobil City', color: '#27ae60', bgColor: '#d5f4e6' },
+                        { min: 1000, max: 1500, name: 'Mobil Sedang', color: '#2ecc71', bgColor: '#d5f4e6' },
+                        { min: 1500, max: 2000, name: 'Mobil Sedan', color: '#3498db', bgColor: '#d6eaf8' },
+                        { min: 2000, max: 3000, name: 'Mobil SUV/MPV', color: '#9b59b6', bgColor: '#e8daef' },
+                        { min: 3000, max: 5000, name: 'Mobil Sport', color: '#e74c3c', bgColor: '#fadbd8' },
+                        { min: 5000, max: Infinity, name: 'Supercar', color: '#c0392b', bgColor: '#f9eaea' }
+                    ]
+                },
+                truk: {
+                    icon: 'fas fa-truck',
+                    classifications: [
+                        { min: 0, max: 3000, name: 'Truk Ringan', color: '#27ae60', bgColor: '#d5f4e6' },
+                        { min: 3000, max: 7000, name: 'Truk Sedang', color: '#3498db', bgColor: '#d6eaf8' },
+                        { min: 7000, max: 12000, name: 'Truk Berat', color: '#f39c12', bgColor: '#fef5e7' },
+                        { min: 12000, max: 20000, name: 'Truk Besar', color: '#e67e22', bgColor: '#fdebd0' },
+                        { min: 20000, max: Infinity, name: 'Truk Trailer', color: '#e74c3c', bgColor: '#fadbd8' }
+                    ]
+                },
+                lainnya: {
+                    icon: 'fas fa-cog',
+                    classifications: [
+                        { min: 0, max: 500, name: 'Mesin Kecil', color: '#27ae60', bgColor: '#d5f4e6' },
+                        { min: 500, max: 2000, name: 'Mesin Sedang', color: '#3498db', bgColor: '#d6eaf8' },
+                        { min: 2000, max: 5000, name: 'Mesin Besar', color: '#f39c12', bgColor: '#fef5e7' },
+                        { min: 5000, max: 10000, name: 'Mesin Sangat Besar', color: '#e67e22', bgColor: '#fdebd0' },
+                        { min: 10000, max: Infinity, name: 'Mesin Industri', color: '#e74c3c', bgColor: '#fadbd8' }
+                    ]
+                }
+            };
+
+            // Data contoh kendaraan
+            const vehicleExamples = {
+                'motor-bebek': { diameter: 52.4, stroke: 57.9, cylinders: 1, vehicle: 'motor' },
+                'motor-sport': { diameter: 57.0, stroke: 58.7, cylinders: 1, vehicle: 'motor' },
+                'mobil-city': { diameter: 72.0, stroke: 77.5, cylinders: 3, vehicle: 'mobil' },
+                'mobil-sport': { diameter: 86.0, stroke: 86.0, cylinders: 4, vehicle: 'mobil' }
+            };
+
+            // Fungsi untuk mengubah jenis kendaraan
+            function changeVehicleType(type) {
+                currentVehicleType = type;
+                
+                // Update UI
+                vehicleTypes.forEach(v => v.classList.remove('active'));
+                document.querySelector(`[data-vehicle="${type}"]`).classList.add('active');
+                
+                // Update nama kendaraan
+                const vehicleNames = {
+                    motor: 'Motor',
+                    mobil: 'Mobil',
+                    truk: 'Truk',
+                    lainnya: 'Mesin Lainnya'
+                };
+                vehicleName.textContent = vehicleNames[type];
+                detailVehicleType.textContent = vehicleNames[type];
+                
+                // Update ikon
+                vehicleIcon.innerHTML = `<i class="${vehicleClassifications[type].icon}"></i>`;
+                
+                // Reset dan hitung ulang jika ada data
+                if (diameterInput.value && strokeInput.value) {
+                    calculateEngineCapacity();
+                }
+            }
+
+            // Fungsi untuk mengubah tab
+            function changeTab(tabId) {
+                currentTab = tabId;
+                
+                // Update tab navigasi
+                navTabs.forEach(tab => tab.classList.remove('active'));
+                document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+                
+                // Update konten tab
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            }
+
+            // Fungsi untuk mendapatkan klasifikasi berdasarkan kapasitas
+            function getClassification(capacity) {
+                const classifications = vehicleClassifications[currentVehicleType].classifications;
+                for (let classification of classifications) {
+                    if (capacity >= classification.min && capacity < classification.max) {
+                        return classification;
+                    }
+                }
+                // Fallback untuk kapasitas sangat besar
+                return classifications[classifications.length - 1];
+            }
+
+            // Fungsi untuk mengatur jumlah silinder dari tombol
+            cylinderButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Hapus kelas active dari semua tombol
+                    cylinderButtons.forEach(btn => btn.classList.remove('active'));
+                    // Tambahkan kelas active ke tombol yang diklik
+                    this.classList.add('active');
+                    // Set nilai input sesuai dengan tombol yang diklik
+                    cylindersInput.value = this.getAttribute('data-cylinders');
+                    // Hitung ulang jika input lain sudah diisi
+                    if (diameterInput.value && strokeInput.value) {
+                        calculateEngineCapacity();
+                    }
+                });
+            });
+
+            // Fungsi untuk mengatur contoh kendaraan
+            quickCalcButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const exampleId = this.getAttribute('data-example');
+                    const example = vehicleExamples[exampleId];
+                    
+                    if (example) {
+                        // Set data contoh
+                        diameterInput.value = example.diameter;
+                        strokeInput.value = example.stroke;
+                        cylindersInput.value = example.cylinders;
+                        
+                        // Update tombol silinder aktif
+                        cylinderButtons.forEach(btn => {
+                            if (parseInt(btn.getAttribute('data-cylinders')) === example.cylinders) {
+                                btn.classList.add('active');
+                            } else {
+                                btn.classList.remove('active');
+                            }
+                        });
+                        
+                        // Set jenis kendaraan jika berbeda
+                        if (example.vehicle !== currentVehicleType) {
+                            changeVehicleType(example.vehicle);
+                        }
+                        
+                        // Hitung kapasitas
+                        calculateEngineCapacity();
+                    }
+                });
+            });
+
+            // Set tombol 1 silinder sebagai aktif secara default
+            cylinderButtons[0].classList.add('active');
+
+            // Fungsi untuk menghitung kapasitas mesin
+            function calculateEngineCapacity() {
+                // Mengambil nilai input
+                const diameter = parseFloat(diameterInput.value);
+                const stroke = parseFloat(strokeInput.value);
+                const cylinders = parseInt(cylindersInput.value);
+
+                // Validasi input
+                if (isNaN(diameter) || isNaN(stroke) || isNaN(cylinders) || 
+                    diameter <= 0 || stroke <= 0 || cylinders <= 0) {
+                    alert('Masukkan nilai diameter, langkah piston, dan jumlah silinder yang valid (bilangan positif).');
+                    return;
+                }
+
+                // Menghitung jari-jari piston
+                const radius = diameter / 2;
+
+                // Menghitung volume satu silinder dalam mm³
+                const volumePerCylinder = Math.PI * Math.pow(radius, 2) * stroke;
+
+                // Menghitung volume total semua silinder
+                const totalVolume = volumePerCylinder * cylinders;
+
+                // Mengonversi ke cm³ (cc)
+                const capacity = totalVolume / 1000;
+
+                // Menampilkan hasil dengan pembulatan 1 desimal
+                resultValue.textContent = capacity.toFixed(1);
+
+                // Menampilkan detail perhitungan
+                detailDiameter.textContent = `${diameter.toFixed(2)} mm`;
+                detailStroke.textContent = `${stroke.toFixed(2)} mm`;
+                detailCylinders.textContent = `${cylinders} silinder`;
+                detailVolumePerCylinder.textContent = `${volumePerCylinder.toFixed(2)} mm³`;
+                detailTotalVolume.textContent = `${totalVolume.toFixed(2)} mm³`;
+                detailCapacity.textContent = `${capacity.toFixed(1)} cc`;
+
+                // Mendapatkan klasifikasi
+                const classification = getClassification(capacity);
+                
+                // Update badge klasifikasi
+                classificationBadge.textContent = classification.name;
+                classificationBadge.style.backgroundColor = classification.bgColor;
+                classificationBadge.style.color = classification.color;
+                classificationBadge.style.borderColor = classification.color;
+                
+                // Update informasi klasifikasi
+                const vehicleNames = {
+                    motor: 'motor',
+                    mobil: 'mobil',
+                    truk: 'truk',
+                    lainnya: 'mesin'
+                };
+                
+                classificationText.textContent = `Kendaraan ini diklasifikasikan sebagai ${classification.name.toLowerCase()} berdasarkan kapasitas mesin ${capacity.toFixed(1)} cc. ${getClassificationDescription(currentVehicleType, capacity)}`;
+                
+                // Mengubah warna hasil berdasarkan klasifikasi
+                resultValue.style.color = classification.color;
+
+                // Update tombol silinder aktif berdasarkan nilai input
+                cylinderButtons.forEach(btn => {
+                    if (parseInt(btn.getAttribute('data-cylinders')) === cylinders) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
+            // Fungsi untuk mendapatkan deskripsi klasifikasi
+            function getClassificationDescription(vehicleType, capacity) {
+                if (vehicleType === 'motor') {
+                    if (capacity < 110) return 'Biasanya digunakan untuk transportasi sehari-hari dengan efisiensi bahan bakar yang baik.';
+                    if (capacity < 150) return 'Cocok untuk penggunaan kota dan perjalanan jarak pendek hingga menengah.';
+                    if (capacity < 250) return 'Memiliki performa yang lebih baik untuk touring dan kecepatan lebih tinggi.';
+                    if (capacity < 500) return 'Motor sport dengan performa tinggi, cocok untuk pengendara berpengalaman.';
+                    if (capacity < 1000) return 'Motor besar dengan tenaga sangat besar, biasanya untuk touring jarak jauh.';
+                    return 'Superbike dengan performa ekstrem, ditujukan untuk pengendara ahli dan trek balap.';
+                } else if (vehicleType === 'mobil') {
+                    if (capacity < 1000) return 'Mobil city yang ekonomis dengan konsumsi bahan bakar rendah.';
+                    if (capacity < 1500) return 'Mobil dengan ukuran sedang, cocok untuk keluarga kecil.';
+                    if (capacity < 2000) return 'Mobil sedan dengan keseimbangan antara performa dan kenyamanan.';
+                    if (capacity < 3000) return 'Kendaraan besar seperti SUV atau MPV dengan kemampuan angkut lebih banyak.';
+                    if (capacity < 5000) return 'Mobil sport dengan performa tinggi dan akselerasi cepat.';
+                    return 'Supercar dengan performa ekstrem, biasanya untuk penggunaan khusus atau balap.';
+                } else if (vehicleType === 'truk') {
+                    if (capacity < 3000) return 'Truk ringan untuk pengiriman dalam kota dengan muatan terbatas.';
+                    if (capacity < 7000) return 'Truk sedang untuk distribusi regional dengan kapasitas muatan lebih besar.';
+                    if (capacity < 12000) return 'Truk berat untuk pengangkutan barang dengan volume besar.';
+                    if (capacity < 20000) return 'Truk besar dengan kemampuan angkut sangat tinggi.';
+                    return 'Truk trailer untuk pengangkutan barang dengan berat dan volume ekstrem.';
+                } else {
+                    if (capacity < 500) return 'Mesin kecil biasanya untuk aplikasi rumah tangga atau alat kecil.';
+                    if (capacity < 2000) return 'Mesin sedang untuk kendaraan kecil atau peralatan industri ringan.';
+                    if (capacity < 5000) return 'Mesin besar untuk kendaraan komersial atau mesin industri.';
+                    if (capacity < 10000) return 'Mesin sangat besar untuk aplikasi industri berat.';
+                    return 'Mesin industri dengan kapasitas ekstrem untuk aplikasi khusus.';
+                }
+            }
+
+            // Fungsi untuk mereset semua nilai
+            function resetCalculator() {
+                diameterInput.value = '';
+                strokeInput.value = '';
+                cylindersInput.value = '1';
+                resultValue.textContent = '0';
+                resultValue.style.color = '#2c3e50';
+                detailDiameter.textContent = '0 mm';
+                detailStroke.textContent = '0 mm';
+                detailCylinders.textContent = '0';
+                detailVolumePerCylinder.textContent = '0 mm³';
+                detailTotalVolume.textContent = '0 mm³';
+                detailCapacity.textContent = '0 cc';
+                classificationBadge.textContent = '-';
+                classificationBadge.style.backgroundColor = '#e8f4fc';
+                classificationBadge.style.color = '#3498db';
+                classificationBadge.style.borderColor = '#3498db';
+                classificationText.textContent = 'Masukkan data untuk melihat klasifikasi kendaraan';
+                
+                // Reset tombol silinder ke default
+                cylinderButtons.forEach(btn => btn.classList.remove('active'));
+                cylinderButtons[0].classList.add('active');
+            }
+
+            // Event listener untuk tombol hitung
+            calculateBtn.addEventListener('click', calculateEngineCapacity);
+
+            // Event listener untuk tombol reset
+            resetBtn.addEventListener('click', resetCalculator);
+
+            // Event listener untuk menekan Enter pada input
+            diameterInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateEngineCapacity();
+            });
+
+            strokeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateEngineCapacity();
+            });
+
+            cylindersInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateEngineCapacity();
+            });
+
+            // Event listener untuk perubahan nilai input silinder
+            cylindersInput.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                if (value < 1) this.value = 1;
+                if (value > 16) this.value = 16;
+                
+                // Update tombol aktif
+                cylinderButtons.forEach(btn => {
+                    if (parseInt(btn.getAttribute('data-cylinders')) === parseInt(this.value)) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // Hitung ulang jika input lain sudah diisi
+                if (diameterInput.value && strokeInput.value) {
+                    calculateEngineCapacity();
+                }
+            });
+
+            // Event listener untuk perubahan nilai diameter dan stroke
+            diameterInput.addEventListener('input', function() {
+                if (this.value && strokeInput.value) {
+                    calculateEngineCapacity();
+                }
+            });
+
+            strokeInput.addEventListener('input', function() {
+                if (this.value && diameterInput.value) {
+                    calculateEngineCapacity();
+                }
+            });
+
+            // Event listener untuk jenis kendaraan
+            vehicleTypes.forEach(type => {
+                type.addEventListener('click', function() {
+                    changeVehicleType(this.getAttribute('data-vehicle'));
+                });
+            });
+
+            // Event listener untuk navigasi tab
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    changeTab(this.getAttribute('data-tab'));
+                });
+            });
+
+            // Contoh data default untuk demo
+            diameterInput.value = '57.8';
+            strokeInput.value = '57.9';
+            
+            // Hitung otomatis saat halaman dimuat
+            calculateEngineCapacity();
+        });
+    </script>
+</body>
+</html>
